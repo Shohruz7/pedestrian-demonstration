@@ -5,6 +5,29 @@
 let cachedData = null
 let cachedGeoJSON = null
 
+// Convert GeoJSON to CSV-like data format
+const geojsonToCSVData = (geojson) => {
+  return geojson.features.map(feature => {
+    const props = feature.properties
+    const coords = feature.geometry?.coordinates || []
+    
+    return {
+      OBJECTID: parseInt(props.OBJECTID || props.objectid) || null,
+      Loc: props.Loc || null,
+      Borough: props.Borough || null,
+      Street_Nam_clean: props.Street_Nam_clean || props.Street_Nam || null,
+      street_clean: props.street_clean || props.Street_Nam_clean || null,
+      Category: props.Category || null,
+      segmentid: props.segmentid || null,
+      avg_recent_count: props.avg_recent_count || null,
+      latitude: coords[1] || null,
+      longitude: coords[0] || null,
+      // Include all other properties for compatibility
+      ...props
+    }
+  }).filter(row => row.OBJECTID) // Filter out rows without OBJECTID
+}
+
 // Load CSV data
 export const loadCSVData = async () => {
   if (cachedData) {
@@ -13,6 +36,9 @@ export const loadCSVData = async () => {
 
   try {
     const response = await fetch('/pedestrian_data.csv')
+    if (!response.ok) {
+      throw new Error('CSV file not found')
+    }
     const text = await response.text()
     const lines = text.split('\n').filter(line => line.trim())
     const headers = lines[0].split(',')
@@ -37,8 +63,17 @@ export const loadCSVData = async () => {
     cachedData = data
     return data
   } catch (error) {
-    console.error('Error loading CSV data:', error)
-    throw error
+    console.warn('CSV file not available, extracting data from GeoJSON:', error)
+    // Fallback: extract data from GeoJSON
+    try {
+      const geojson = await loadGeoJSONData()
+      const data = geojsonToCSVData(geojson)
+      cachedData = data
+      return data
+    } catch (geojsonError) {
+      console.error('Error loading data from GeoJSON:', geojsonError)
+      throw new Error('Unable to load data from CSV or GeoJSON')
+    }
   }
 }
 
@@ -50,14 +85,17 @@ export const loadGeoJSONData = async () => {
 
   try {
     const response = await fetch('/pedestrian_data.geojson')
+    if (!response.ok) {
+      throw new Error('GeoJSON file not found')
+    }
     const geojson = await response.json()
     cachedGeoJSON = geojson
     return geojson
   } catch (error) {
-    console.warn('GeoJSON not available, using CSV coordinates:', error)
-    // Fallback: create GeoJSON from CSV if available
-    const csvData = await loadCSVData()
-    return csvToGeoJSON(csvData)
+    console.warn('GeoJSON not available:', error)
+    // If GeoJSON fails, we can't create it from CSV since CSV might also fail
+    // This should not happen if the GeoJSON file exists
+    throw error
   }
 }
 
