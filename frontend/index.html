@@ -33,7 +33,27 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="padding: 20px; font-family: sans-serif; background: #f0f0f0; min-height: 100vh;">
+        <h1>Loading...</h1>
+        <p>If you see this, HTML is loading but React hasn't mounted yet.</p>
+        <p id="status">Checking...</p>
+      </div>
+    </div>
+    <script>
+      // Immediate inline script to verify HTML is loading
+      console.log('📄 HTML loaded');
+      document.getElementById('status').textContent = 'HTML loaded, waiting for React...';
+      
+      // Show error if React doesn't load within 5 seconds
+      setTimeout(function() {
+        const root = document.getElementById('root');
+        if (root && root.children.length === 1 && root.children[0].id === 'status') {
+          console.error('⚠️ React did not mount within 5 seconds');
+          document.getElementById('status').innerHTML = '<strong style="color: red;">Error: React did not mount. Check console for errors.</strong>';
+        }
+      }, 5000);
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
