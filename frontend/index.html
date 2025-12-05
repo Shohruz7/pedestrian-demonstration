@@ -43,14 +43,39 @@
     <script>
       // Immediate inline script to verify HTML is loading
       console.log('📄 HTML loaded');
-      document.getElementById('status').textContent = 'HTML loaded, waiting for React...';
+      const statusEl = document.getElementById('status');
+      if (statusEl) {
+        statusEl.textContent = 'HTML loaded, waiting for React...';
+      }
+      
+      // Check for script loading errors
+      window.addEventListener('error', function(e) {
+        console.error('Script error detected:', e);
+        if (statusEl && e.target && e.target.tagName === 'SCRIPT') {
+          statusEl.innerHTML = '<strong style="color: red;">Failed to load script: ' + e.target.src + '</strong><br>Status: ' + (e.message || 'Unknown error') + '<br>Check Network tab for details.';
+        } else if (statusEl && e.filename) {
+          statusEl.innerHTML = '<strong style="color: red;">JavaScript Error</strong><br>File: ' + e.filename + '<br>Message: ' + (e.message || 'Unknown error') + '<br>Line: ' + (e.lineno || 'unknown');
+        }
+      }, true);
+      
+      // Log all script tags to see what's being loaded
+      setTimeout(function() {
+        const scripts = document.querySelectorAll('script[type="module"]');
+        console.log('Found ' + scripts.length + ' module script(s):');
+        scripts.forEach(function(script, i) {
+          console.log('Script ' + (i + 1) + ':', script.src || script.textContent.substring(0, 50));
+        });
+      }, 1000);
       
       // Show error if React doesn't load within 5 seconds
       setTimeout(function() {
         const root = document.getElementById('root');
-        if (root && root.children.length === 1 && root.children[0].id === 'status') {
+        const firstChild = root && root.firstElementChild;
+        if (root && firstChild && firstChild.id === 'status') {
           console.error('⚠️ React did not mount within 5 seconds');
-          document.getElementById('status').innerHTML = '<strong style="color: red;">Error: React did not mount. Check console for errors.</strong>';
+          if (statusEl) {
+            statusEl.innerHTML = '<strong style="color: red;">Error: React did not mount within 5 seconds.</strong><br>Check browser console (F12) for JavaScript errors.<br>Check Network tab to see if JS files are loading.';
+          }
         }
       }, 5000);
     </script>
