@@ -6,7 +6,7 @@
   "framework": "vite",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/((?!assets|pedestrian_data\\.geojson|pedestrian_data\\.csv).*)",
       "destination": "/index.html"
     }
   ],
