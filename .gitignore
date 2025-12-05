@@ -1,0 +1,111 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Data files
+data
+data-raw/*
+data_clean/*
+output/*
+*.csv
+Connect.md
+start.md
+
+# Backend scripts
+test_api.py
+setup_database.sh
+quick_start.sh
+quick_test.sh
+start_backend.sh
+start_frontend.sh
+test_connection.sh
+backend/test_api.py
+backend/setup_database.sh
+backend/quick_start.sh
+backend/quick_test.sh
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/*.log
+
+# Backend
+backend/__pycache__/
+backend/.env
+backend/instance/
+backend/.pytest_cache/
+backend/migrations/versions/*.pyc
+backend/*.log
+backend/app.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+frontend/package-lock.json.bak
