@@ -22,6 +22,8 @@ function TabPanel({ children, value, index }) {
 }
 
 function App() {
+  console.log('📱 App component rendering...')
+  
   const [mode, setMode] = useState(() => {
     // Check localStorage for saved preference, default to 'light'
     try {
@@ -111,7 +113,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <ErrorBoundary>
-        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: 'background.default' }}>
         {/* Header */}
         <Paper elevation={2} sx={{ p: { xs: 1, md: 2 }, position: 'relative' }}>
           <Box sx={{ 
