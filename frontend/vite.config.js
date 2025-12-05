@@ -9,21 +9,17 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    // Optimize bundle size - simplified chunking to avoid circular dependency issues
+    // Disable manual chunking to avoid circular dependency issues with MUI
+    // Vite will automatically chunk based on dependencies
     rollupOptions: {
       output: {
         manualChunks(id) {
-          // Manual chunking for better code splitting
+          // Only chunk React separately - let Vite handle MUI automatically
           if (id.includes('node_modules')) {
-            // Keep React separate
             if (id.includes('react') || id.includes('react-dom')) {
               return 'react-vendor'
             }
-            // Keep MUI and Emotion together but separate from other vendors
-            // This helps avoid circular dependency issues
-            if (id.includes('@mui') || id.includes('@emotion')) {
-              return 'mui-vendor'
-            }
+            // Don't manually chunk MUI - let Vite handle it to avoid circular deps
             // Keep other large libraries separate
             if (id.includes('leaflet')) {
               return 'map-vendor'
@@ -31,6 +27,7 @@ export default defineConfig({
             if (id.includes('recharts')) {
               return 'chart-vendor'
             }
+            // Everything else goes to vendor (including MUI)
             return 'vendor'
           }
         }
