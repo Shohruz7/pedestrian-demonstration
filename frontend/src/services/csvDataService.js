@@ -31,13 +31,15 @@ const geojsonToCSVData = (geojson) => {
 // Load CSV data
 export const loadCSVData = async () => {
   if (cachedData) {
+    console.log('Using cached CSV data')
     return cachedData
   }
 
+  console.log('Loading CSV data...')
   try {
     const response = await fetch('/pedestrian_data.csv')
     if (!response.ok) {
-      throw new Error('CSV file not found')
+      throw new Error(`CSV file not found: ${response.status} ${response.statusText}`)
     }
     const text = await response.text()
     const lines = text.split('\n').filter(line => line.trim())
@@ -60,19 +62,22 @@ export const loadCSVData = async () => {
       return obj
     }).filter(row => row.OBJECTID) // Filter out empty rows
 
+    console.log(`Loaded ${data.length} rows from CSV`)
     cachedData = data
     return data
   } catch (error) {
-    console.warn('CSV file not available, extracting data from GeoJSON:', error)
+    console.warn('CSV file not available, extracting data from GeoJSON:', error.message)
     // Fallback: extract data from GeoJSON
     try {
+      console.log('Loading GeoJSON data as fallback...')
       const geojson = await loadGeoJSONData()
       const data = geojsonToCSVData(geojson)
+      console.log(`Extracted ${data.length} rows from GeoJSON`)
       cachedData = data
       return data
     } catch (geojsonError) {
       console.error('Error loading data from GeoJSON:', geojsonError)
-      throw new Error('Unable to load data from CSV or GeoJSON')
+      throw new Error(`Unable to load data: ${geojsonError.message}`)
     }
   }
 }
@@ -80,22 +85,25 @@ export const loadCSVData = async () => {
 // Load GeoJSON data
 export const loadGeoJSONData = async () => {
   if (cachedGeoJSON) {
+    console.log('Using cached GeoJSON data')
     return cachedGeoJSON
   }
 
+  console.log('Loading GeoJSON data...')
   try {
     const response = await fetch('/pedestrian_data.geojson')
     if (!response.ok) {
-      throw new Error('GeoJSON file not found')
+      throw new Error(`GeoJSON file not found: ${response.status} ${response.statusText}`)
     }
     const geojson = await response.json()
+    console.log(`Loaded GeoJSON with ${geojson.features?.length || 0} features`)
     cachedGeoJSON = geojson
     return geojson
   } catch (error) {
-    console.warn('GeoJSON not available:', error)
+    console.error('GeoJSON not available:', error.message)
     // If GeoJSON fails, we can't create it from CSV since CSV might also fail
     // This should not happen if the GeoJSON file exists
-    throw error
+    throw new Error(`Failed to load GeoJSON: ${error.message}`)
   }
 }
 

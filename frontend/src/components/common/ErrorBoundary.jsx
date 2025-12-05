@@ -27,8 +27,8 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <Box sx={{ p: 3 }}>
-          <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Box sx={{ p: 3, minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Paper sx={{ p: 3, textAlign: 'center', maxWidth: 600 }}>
             <ErrorOutline sx={{ fontSize: 48, color: 'error.main', mb: 2 }} />
             <Typography variant="h5" gutterBottom>
               Something went wrong
@@ -36,10 +36,10 @@ class ErrorBoundary extends React.Component {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {this.state.error?.message || 'An unexpected error occurred'}
             </Typography>
-            {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
+            {this.state.errorInfo && (
               <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1, textAlign: 'left' }}>
-                <Typography variant="caption" component="pre" sx={{ fontSize: '0.75rem', overflow: 'auto' }}>
-                  {this.state.errorInfo.componentStack}
+                <Typography variant="caption" component="pre" sx={{ fontSize: '0.75rem', overflow: 'auto', whiteSpace: 'pre-wrap' }}>
+                  {this.state.error?.stack || this.state.errorInfo.componentStack || String(this.state.error)}
                 </Typography>
               </Box>
             )}

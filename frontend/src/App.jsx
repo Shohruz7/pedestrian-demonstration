@@ -24,8 +24,13 @@ function TabPanel({ children, value, index }) {
 function App() {
   const [mode, setMode] = useState(() => {
     // Check localStorage for saved preference, default to 'light'
-    const savedMode = localStorage.getItem('themeMode')
-    return savedMode || 'light'
+    try {
+      const savedMode = localStorage.getItem('themeMode')
+      return savedMode || 'light'
+    } catch (e) {
+      // localStorage might not be available in some environments
+      return 'light'
+    }
   })
   const [tabValue, setTabValue] = useState(0)
   const [mapViewMode, setMapViewMode] = useState('markers') // 'markers' or 'heatmap'
@@ -64,7 +69,12 @@ function App() {
   const toggleColorMode = () => {
     const newMode = mode === 'light' ? 'dark' : 'light'
     setMode(newMode)
-    localStorage.setItem('themeMode', newMode)
+    try {
+      localStorage.setItem('themeMode', newMode)
+    } catch (e) {
+      // localStorage might not be available
+      console.warn('Could not save theme preference:', e)
+    }
   }
 
   const handleTabChange = (event, newValue) => {
